@@ -19,3 +19,8 @@ Query for a list of resources:
 Get a single resource:
 
     >>> gapi.Query('customers').get('xxAaBceD')
+
+Dependencies
+===
+
+* [requests](http://docs.python-requests.org/en/latest/)
