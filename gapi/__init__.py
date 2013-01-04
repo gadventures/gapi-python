@@ -13,8 +13,6 @@ class ApiBase(object):
 
         url = API_ROOT + uri
 
-        print "Hitting url", url
-
         request = urllib2.Request(url)
         request.add_header('Content-Type', 'application/json')
 
