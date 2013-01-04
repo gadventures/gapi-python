@@ -1,4 +1,4 @@
-import urllib2
+import requests
 import json
 
 API_ROOT = 'http://rest.gadventures.com'
@@ -9,20 +9,16 @@ class ApiBase(object):
         """
         Make an HTTP request to a target API method with proper headers.
         """
-        assert method in ['GET','POST', 'PUT'], "Only 'GET', 'POST', and 'PUT' are allowed."
+        assert method in ['GET', 'POST', 'PUT'], "Only 'GET', 'POST', and 'PUT' are allowed."
 
         url = API_ROOT + uri
 
-        request = urllib2.Request(url)
-        request.add_header('Content-Type', 'application/json')
+        headers = {'Content-Type': 'application/json', 'X-Application-Key': APPLICATION_KEY}
 
-        request.add_header('X-Application-Key', APPLICATION_KEY)
+        requests_call = getattr(requests, method.lower())
+        request = requests_call(url, headers=headers)
 
-        request.get_method = lambda: method
-
-        response = urllib2.urlopen(request)
-        response_body = response.read()
-        response_dict = json.loads(response_body)
+        response_dict = json.loads(request.text)
         return response_dict
 
 class ApiObject(ApiBase):
