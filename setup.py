@@ -7,4 +7,5 @@ setup(
     author='G Adventures',
     author_email='software@gadventures.com',
     description='Python client for the G Adventures REST API',
+    install_requires = ['requests>=1.0.4'], 
 )
