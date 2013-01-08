@@ -16,5 +16,21 @@ class ApiTestCase(unittest.TestCase):
     def test_get(self):
         result = gapi.Query('customers').get('00130000011iW14AAE')
 
+    def test_update(self):
+        with mock.patch('gapi.ApiBase._request') as mock_request, \
+             mock.patch('gapi.Query._fetch') as mock_fetch:
+            mock_fetch.return_value = gapi.ApiObject('customers', {
+                'id': '1',
+                'name': 'Action',
+            })
+            obj = gapi.Query('customers').get('00130000011iW14AAE')
+
+            obj.save()
+            self.assertTrue(mock_request.called_with(
+                'http://rest.gadventures.com/customers/00130000011iW14AAE/',
+                'PUT',
+                '{"name": "Action"}'
+            ))
+
 if __name__ == '__main__':
     unittest.main()

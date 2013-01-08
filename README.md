@@ -20,6 +20,12 @@ Get a single resource:
 
     >>> gapi.Query('customers').get('xxAaBceD')
 
+Update a fetched resource:
+
+    >>> customer = gapi.Query('customers').get('xxAaBceD')
+    >>> # do things to customer data.
+    >>> customer.save()
+
 Dependencies
 ===
 

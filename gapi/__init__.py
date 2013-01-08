@@ -5,7 +5,7 @@ API_ROOT = 'http://rest.gadventures.com'
 APPLICATION_KEY = ''
 
 class ApiBase(object):
-    def _request(self, uri, method):
+    def _request(self, uri, method, data=None):
         """
         Make an HTTP request to a target API method with proper headers.
         """
@@ -16,7 +16,7 @@ class ApiBase(object):
         headers = {'Content-Type': 'application/json', 'X-Application-Key': APPLICATION_KEY}
 
         requests_call = getattr(requests, method.lower())
-        request = requests_call(url, headers=headers)
+        request = requests_call(url, headers=headers, data=data)
 
         response_dict = json.loads(request.text)
         return response_dict
@@ -24,13 +24,40 @@ class ApiBase(object):
 class ApiObject(ApiBase):
     def __init__(self, resource_name, data_dict=None):
         self._resource_name = resource_name
+        self._object_id = None
 
-        # sloppy but simple for now.
         if data_dict:
-            self.__dict__.update(data_dict)
+            self._populate_from_dict(data_dict)
+
+    def _populate_from_dict(self, data_dict):
+        if 'id' in data_dict:
+            self._object_id = data_dict['id']
+            del data_dict['id']
+
+        self.__dict__.update(data_dict)
+
+    def save(self):
+        if self._object_id:
+            self._update()
+        else:
+            self._create()
+
+    def get_json_data(self):
+        return json.dumps(self.__dict__)
+
+    def _update(self):
+        uri = '/{0}/{1}/'.format(self._resource_name, self._object_id)
+        data = self.get_json_data()
+        response_dict = self._request(uri, 'PUT', data)
+
+    def _create(self):
+        uri = '/{0}/'.format(self._resource_name)
+        data = self.get_json_data()
+        response_dict = self._request(uri, 'POST', data)
+        self._object_id = response_dict['id']
 
     def __repr__(self):
-        return '<{}: {}>'.format(self._resource_name, getattr(self, 'id', None))
+        return '<{}: {}>'.format(self._resource_name, self._object_id)
 
 class Query(ApiBase):
     def __init__(self, resource_name):
