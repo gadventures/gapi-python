@@ -19,12 +19,14 @@ class ApiBase(object):
         request = requests_call(url, headers=headers, data=data)
 
         response_dict = json.loads(request.text)
+
         return response_dict
 
 class ApiObject(ApiBase):
     def __init__(self, resource_name, data_dict=None):
         self._resource_name = resource_name
         self._object_id = None
+        self._updated_at = None
 
         if data_dict:
             self._populate_from_dict(data_dict)
@@ -33,6 +35,10 @@ class ApiObject(ApiBase):
         if 'id' in data_dict:
             self._object_id = data_dict['id']
             del data_dict['id']
+
+        if 'updated_at' in data_dict:
+            self._updated_at = data_dict['updated_at']
+            del data_dict['updated_at']
 
         self.__dict__.update(data_dict)
 
@@ -43,7 +49,11 @@ class ApiObject(ApiBase):
             self._create()
 
     def get_json_data(self):
-        return json.dumps(self.__dict__)
+        # TODO: The links and href properties shouldnt be in this list. They
+        # shouldnt really be in the model passed in.
+        properties = [(k, v) for k, v in self.__dict__.items() 
+                        if not k.startswith(('_', 'links', 'href',))]
+        return json.dumps(dict(properties))
 
     def _update(self):
         uri = '/{0}/{1}/'.format(self._resource_name, self._object_id)
