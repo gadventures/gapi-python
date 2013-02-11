@@ -1,20 +1,36 @@
+import json
 import unittest
 import mock
 
 import gapi
 
-gapi.APPLICATION_KEY = 'FAKE'
+gapi.APPLICATION_KEY = 'TESTER'
 
 class ApiTestCase(unittest.TestCase):
-    """
-    Not a working test case."
-    """
     def test_query(self):
-        query = gapi.Query('customers')
-        results = query.fetch()
+        with mock.patch('gapi.ApiBase._request') as mock_request:
+            mock_request.return_value = {
+                'results': [{
+                'id': '1',
+                'name': 'Bronson',
+                }]
+            }
+
+            query = gapi.Query('customers')
+            results = query.fetch()
+            self.assertEquals([json.loads(r.get_json_data()) for r in results],
+                    [{"id": "1", "name": "Bronson"}])
 
     def test_get(self):
-        result = gapi.Query('customers').get('00130000011iW14AAE')
+        with mock.patch('gapi.ApiBase._request') as mock_request:
+            mock_request.return_value = {
+                    'id': '1',
+                    'name': 'Carmack',
+            }
+            result = gapi.Query('customers').get('00130000011iW14AAE')
+
+            self.assertEquals(json.loads(result.get_json_data()), 
+                    {'id': '1', 'name': 'Carmack'})
 
     def test_update(self):
         with mock.patch('gapi.ApiBase._request') as mock_request, \
