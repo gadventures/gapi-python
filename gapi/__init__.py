@@ -46,12 +46,15 @@ class ApiObject(ApiBase):
         else:
             self._create()
 
-    def get_json_data(self):
+    def as_dict(self):
         # TODO: The links and href properties shouldnt be in this list. They
         # shouldnt really be in the model passed in.
         properties = [(k, v) for k, v in self._data_dict.items()
                         if not k.startswith(('_', 'links', 'href',))]
-        return json.dumps(dict(properties))
+        return dict(properties)
+        
+    def get_json_data(self):
+        return json.dumps(self.as_dict())
 
     def _update(self):
         uri = '/{0}/{1}/'.format(self._resource_name, self._object_id)
