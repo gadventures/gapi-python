@@ -58,12 +58,12 @@ class ApiObject(ApiBase):
 
     def _update(self):
         uri = '/{0}/{1}/'.format(self._resource_name, self._object_id)
-        data = self.get_json_data()
+        data = self.as_json()
         response_dict = self._request(uri, 'PUT', data)
 
     def _create(self):
         uri = '/{0}/'.format(self._resource_name)
-        data = self.get_json_data()
+        data = self.as_json()
         response_dict = self._request(uri, 'POST', data)
         self._object_id = response_dict['id']
 
