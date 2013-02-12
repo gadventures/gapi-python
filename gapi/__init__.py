@@ -53,7 +53,7 @@ class ApiObject(ApiBase):
                         if not k.startswith(('_', 'links', 'href',))]
         return dict(properties)
         
-    def get_json_data(self):
+    def as_json(self):
         return json.dumps(self.as_dict())
 
     def _update(self):

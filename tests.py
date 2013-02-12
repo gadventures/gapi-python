@@ -18,7 +18,7 @@ class ApiTestCase(unittest.TestCase):
 
             query = gapi.Query('customers')
             results = query.fetch()
-            self.assertEquals([json.loads(r.get_json_data()) for r in results],
+            self.assertEquals([json.loads(r.as_json()) for r in results],
                     [{"id": "1", "name": "Bronson"}])
 
     def test_get(self):
@@ -29,7 +29,7 @@ class ApiTestCase(unittest.TestCase):
             }
             result = gapi.Query('customers').get('00130000011iW14AAE')
 
-            self.assertEquals(json.loads(result.get_json_data()), 
+            self.assertEquals(json.loads(result.as_json()),
                     {'id': '1', 'name': 'Carmack'})
 
     def test_update(self):
