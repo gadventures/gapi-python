@@ -47,10 +47,8 @@ class ApiObject(ApiBase):
             self._create()
 
     def as_dict(self):
-        # TODO: Should href be in the model passed to Backbone? Does it hurt it?
-        # Less massaging we do the better. Less surprises
         properties = [(k, v) for k, v in self._data_dict.items()
-                        if not k.startswith(('_', 'href',))]
+                        if not k.startswith('_')]
         return dict(properties)
         
     def as_json(self):
