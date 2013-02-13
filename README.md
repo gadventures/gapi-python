@@ -23,7 +23,7 @@ Get a single resource:
 Query a list of resources via a parent criteria. This takes advantage of a
 helpful feature in the API which makes it easy to query for related resources.
 
-    >>> query = gapi.Query('bookings').parent('customers', 'xxAaBceD').fetch()
+    >>> gapi.Query('bookings').parent('customers', 'xxAaBceD').fetch()
 
 Update a fetched resource:
 
