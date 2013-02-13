@@ -74,10 +74,15 @@ class Query(ApiBase):
     def __init__(self, resource_name):
         self._resource_name = resource_name
         self._object_id = None
+        self._parent = None
 
     def get(self, object_id):
         self._object_id = object_id
         return self._fetch(single_result=True)
+
+    def parent(self, resource_name, resource_id):
+        self._parent = (resource_name, resource_id)
+        return self
 
     def fetch(self):
         return self._fetch()
@@ -86,7 +91,10 @@ class Query(ApiBase):
         if self._object_id:
             uri = '/{0}/{1}/'.format(self._resource_name, self._object_id)
         else:
-            uri = '/{0}/'.format(self._resource_name)
+            if self._parent:
+                uri = '/{1}/{2}/{0}/'.format(self._resource_name, *self._parent)
+            else:
+                uri = '/{0}/'.format(self._resource_name)
 
         response_dict = self._request(uri, 'GET')
 

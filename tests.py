@@ -21,6 +21,20 @@ class ApiTestCase(unittest.TestCase):
             self.assertEquals([json.loads(r.as_json()) for r in results],
                     [{"id": "1", "name": "Bronson"}])
 
+    def test_query_with_parent(self):
+        with mock.patch('gapi.ApiBase._request') as mock_request:
+            mock_request.return_value = {
+                'results': [{
+                    'id': '1',
+                    'name': 'Emperor',
+                }]
+            }
+            query = gapi.Query('bookings').parent('customers', 'aaBBceDz')
+
+            results = query.fetch()
+            self.assertEquals([r.as_dict() for r in results],
+                    [{'id': '1', 'name': 'Emperor'}])
+
     def test_get(self):
         with mock.patch('gapi.ApiBase._request') as mock_request:
             mock_request.return_value = {
