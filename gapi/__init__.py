@@ -20,7 +20,7 @@ class ApiBase(object):
         request = requests_call(url, headers=headers, data=data)
 
         if request.status_code in (requests.codes.ok, requests.codes.created,
-                requests.codes.accepted, requests.codes):
+                requests.codes.accepted):
             response_dict = json.loads(request.text)
             return response_dict
         else:
