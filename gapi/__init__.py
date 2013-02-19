@@ -16,11 +16,15 @@ class ApiBase(object):
         headers = {'Content-Type': 'application/json', 'X-Application-Key': APPLICATION_KEY}
 
         requests_call = getattr(requests, method.lower())
+
         request = requests_call(url, headers=headers, data=data)
 
-        response_dict = json.loads(request.text)
-
-        return response_dict
+        if request.status_code in (requests.codes.ok, requests.codes.created,
+                requests.codes.accepted, requests.codes):
+            response_dict = json.loads(request.text)
+            return response_dict
+        else:
+            return request.raise_for_status()
 
 class ApiObject(ApiBase):
     def __init__(self, resource_name, data_dict=None):
