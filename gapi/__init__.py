@@ -24,6 +24,7 @@ class ApiBase(object):
             response_dict = json.loads(request.text)
             return response_dict
         else:
+            request.reason = request.text
             return request.raise_for_status()
 
 class ApiObject(ApiBase):
