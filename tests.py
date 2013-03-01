@@ -2,13 +2,13 @@ import json
 import unittest
 import mock
 
-import gapi
+import gapipy as gapi
 
 gapi.APPLICATION_KEY = 'TESTER'
 
 class ApiTestCase(unittest.TestCase):
     def test_query(self):
-        with mock.patch('gapi.ApiBase._request') as mock_request:
+        with mock.patch('gapipy.ApiBase._request') as mock_request:
             mock_request.return_value = {
                 'results': [{
                 'id': '1',
@@ -22,7 +22,7 @@ class ApiTestCase(unittest.TestCase):
                     [{"id": "1", "name": "Bronson"}])
 
     def test_query_with_parent(self):
-        with mock.patch('gapi.ApiBase._request') as mock_request:
+        with mock.patch('gapipy.ApiBase._request') as mock_request:
             mock_request.return_value = {
                 'results': [{
                     'id': '1',
@@ -36,7 +36,7 @@ class ApiTestCase(unittest.TestCase):
                     [{'id': '1', 'name': 'Emperor'}])
 
     def test_get(self):
-        with mock.patch('gapi.ApiBase._request') as mock_request:
+        with mock.patch('gapipy.ApiBase._request') as mock_request:
             mock_request.return_value = {
                     'id': '1',
                     'name': 'Carmack',
@@ -47,8 +47,8 @@ class ApiTestCase(unittest.TestCase):
                     {'id': '1', 'name': 'Carmack'})
 
     def test_update(self):
-        with mock.patch('gapi.ApiBase._request') as mock_request, \
-             mock.patch('gapi.Query._fetch') as mock_fetch:
+        with mock.patch('gapipy.ApiBase._request') as mock_request, \
+             mock.patch('gapipy.Query._fetch') as mock_fetch:
             mock_fetch.return_value = gapi.ApiObject('customers', {
                 'id': '1',
                 'name': 'Action',
