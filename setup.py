@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='gapipy',
-    version='0.0.2',
+    version='0.0.3',
     author='G Adventures',
     author_email='software@gadventures.com',
     description='Python client for the G Adventures REST API',

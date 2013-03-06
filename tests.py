@@ -4,6 +4,7 @@ import mock
 
 import gapipy as gapi
 
+gapi.REST_API_ROOT = 'http://127.0.0.1'
 gapi.APPLICATION_KEY = 'TESTER'
 
 class ApiTestCase(unittest.TestCase):
@@ -46,21 +47,52 @@ class ApiTestCase(unittest.TestCase):
             self.assertEquals(json.loads(result.as_json()),
                     {'id': '1', 'name': 'Carmack'})
 
-    def test_update(self):
+    def test_modify_attribute(self):
+        obj = gapi.ApiObject('customers', {
+            'first_name': 'Florence',
+            'last_name': 'Machine',
+        })
+
+        obj.set({'first_name': 'The'})
+
+        self.assertEquals(obj.as_dict(), {'first_name': 'The', 'last_name': 'Machine'})
+
+    def test_watch_modified(self):
+        obj = gapi.ApiObject('customers', {
+            'id': 100,
+            'first_name': 'Florence',
+            'last_name': 'Machine',
+        })
+        obj.set({'first_name': 'Portis', 'last_name': 'head'})
+        self.assertEquals(obj.as_dict(), {'first_name': 'Portis', 'id': 100, 'last_name': 'head'})
+        self.assertEquals(obj._changed, ['first_name', 'last_name'])
+
+        # Upon saving the object, changed should be cleared.
+        with mock.patch('gapipy.ApiBase._request') as mock_request:
+            obj.save(partial=True)
+            mock_request.assert_called_with(
+                '/customers/100/',
+                'PATCH',
+                '{"first_name": "Portis", "last_name": "head"}',
+            )
+
+        self.assertEquals(obj._changed, [])
+
+    def test_update_put(self):
         with mock.patch('gapipy.ApiBase._request') as mock_request, \
              mock.patch('gapipy.Query._fetch') as mock_fetch:
             mock_fetch.return_value = gapi.ApiObject('customers', {
-                'id': '1',
+                'id': '00130000011iW14AAE',
                 'name': 'Action',
             })
             obj = gapi.Query('customers').get('00130000011iW14AAE')
 
             obj.save()
-            self.assertTrue(mock_request.called_with(
-                'http://rest.gadventures.com/customers/00130000011iW14AAE/',
+            mock_request.assert_called_with(
+                '/customers/00130000011iW14AAE/',
                 'PUT',
-                '{"name": "Action"}'
-            ))
+                '{"id": "00130000011iW14AAE", "name": "Action"}'
+            )
 
 if __name__ == '__main__':
     unittest.main()
