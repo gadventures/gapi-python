@@ -2,6 +2,7 @@ import requests
 import json
 
 API_ROOT = 'http://rest.gadventures.com'
+API_PROXY = ''
 APPLICATION_KEY = ''
 
 class ApiBase(object):
@@ -14,6 +15,9 @@ class ApiBase(object):
         url = API_ROOT + uri
 
         headers = {'Content-Type': 'application/json', 'X-Application-Key': APPLICATION_KEY}
+
+        if API_PROXY:
+            headers.update({'X-Api-Proxy': API_PROXY})
 
         requests_call = getattr(requests, method.lower())
 

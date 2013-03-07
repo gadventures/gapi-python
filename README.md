@@ -8,7 +8,7 @@ Usage
 You'll need to provide your G-API _Application Key_. This is available from your
 G-API Dashboard
 
-    >>> import gapi
+    >>> import gapipy as gapi
     >>> gapi.APPLICATION_KEY = 'your application_key'
 
 Query for a list of resources:
@@ -36,6 +36,13 @@ Update a fetched resource, with only data that has been changed (PATCH)
     >>> customer = gapi.Query('customers').get('xxAaBceD')
     >>> customer.set({'emergency_contact': '555-555-5555'})
     >>> customer.save(partial=True)
+
+Advanced Usage
+====
+
+Although it will be very rare that you change `API_ROOT`, unless you're hosting
+your own API layer, it can be common for you to adjust `API_PROXY`. By changing
+this variable, all links returned by the API will be relative to `API_PROXY`
 
 Dependencies
 ===
