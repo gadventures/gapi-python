@@ -11,8 +11,13 @@ class ApiBase(object):
         Make an HTTP request to a target API method with proper headers.
         """
         assert method in ['GET', 'POST', 'PUT', 'PATCH'], "Only 'GET', 'POST', 'PUT', and 'PATCH' are allowed."
+        assert APPLICATION_KEY
 
-        url = API_ROOT + uri
+        # Support supplying a full url
+        if '://' in uri:
+            url = uri
+        else:
+            url = API_ROOT + uri
 
         headers = {'Content-Type': 'application/json', 'X-Application-Key': APPLICATION_KEY}
 
@@ -70,7 +75,7 @@ class ApiObject(ApiBase):
         properties = [(k, v) for k, v in self._data_dict.items()
                         if not k.startswith('_') and k in update_fields]
         return dict(properties)
-        
+
     def as_json(self, partial=False):
         return json.dumps(self.as_dict(partial=partial))
 
@@ -98,28 +103,46 @@ class Query(ApiBase):
 
     def get(self, object_id):
         self._object_id = object_id
-        return self._fetch(single_result=True)
+        return self._fetch_one()
 
     def parent(self, resource_name, resource_id):
         self._parent = (resource_name, resource_id)
         return self
 
     def fetch(self):
-        return self._fetch()
+        return self._fetch_all()
 
-    def _fetch(self, single_result=False):
+    def _get_uri(self):
         if self._object_id:
-            uri = '/{0}/{1}/'.format(self._resource_name, self._object_id)
+            return '/{0}/{1}/'.format(self._resource_name, self._object_id)
         else:
             if self._parent:
-                uri = '/{1}/{2}/{0}/'.format(self._resource_name, *self._parent)
+                return '/{1}/{2}/{0}/'.format(self._resource_name, *self._parent)
             else:
-                uri = '/{0}/'.format(self._resource_name)
+                return '/{0}/'.format(self._resource_name)
+
+    def _fetch_one(self):
+        uri = self._get_uri()
+        response_dict = self._request(uri, 'GET')
+        return ApiObject(self._resource_name, response_dict)
+
+    def _fetch_all(self, uri=None):
+        '''
+        ``uri``
+            For following paginated results or otherwise pregenerated uri's
+            from the response itself.
+        '''
+        if not uri:
+            uri = self._get_uri()
 
         response_dict = self._request(uri, 'GET')
+        for result in response_dict['results']:
+            yield ApiObject(self._resource_name, result)
 
-        if single_result:
-            return ApiObject(self._resource_name, response_dict)
-        else:
-            return [ApiObject(self._resource_name, result) for
-                        result in response_dict['results']]
+        # Results are paginated so continue with another query
+        for link in response_dict.get('links', []):
+            if link['rel'] != 'next':
+                continue
+            for result in self._fetch_all(link['href']):
+                yield result
+

@@ -80,7 +80,7 @@ class ApiTestCase(unittest.TestCase):
 
     def test_update_put(self):
         with mock.patch('gapipy.ApiBase._request') as mock_request, \
-             mock.patch('gapipy.Query._fetch') as mock_fetch:
+             mock.patch('gapipy.Query._fetch_one') as mock_fetch:
             mock_fetch.return_value = gapi.ApiObject('customers', {
                 'id': '00130000011iW14AAE',
                 'name': 'Action',
