@@ -11,7 +11,6 @@ class ApiBase(object):
         Make an HTTP request to a target API method with proper headers.
         """
         assert method in ['GET', 'POST', 'PUT', 'PATCH'], "Only 'GET', 'POST', 'PUT', and 'PATCH' are allowed."
-        assert APPLICATION_KEY
 
         # Support supplying a full url
         if '://' in uri:
