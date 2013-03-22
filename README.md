@@ -37,6 +37,16 @@ Update a fetched resource, with only data that has been changed (PATCH)
     >>> customer.set({'emergency_contact': '555-555-5555'})
     >>> customer.save(partial=True)
 
+Filtering Resources
+===
+
+You are able to filter resources based on some simple operators.
+
+For instance, simple equality checks:
+
+    >>> gapi.Query('customers').eq('last_name', 'Bronson')
+    >>> gapi.Query('customers').eq('first_name', 'Action').eq('last_name', 'Bronson')
+
 Advanced Usage
 ====
 

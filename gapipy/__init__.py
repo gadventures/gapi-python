@@ -6,7 +6,7 @@ API_PROXY = ''
 APPLICATION_KEY = ''
 
 class ApiBase(object):
-    def _request(self, uri, method, data=None):
+    def _request(self, uri, method, data=None, options=None):
         """
         Make an HTTP request to a target API method with proper headers.
         """
@@ -25,7 +25,7 @@ class ApiBase(object):
 
         requests_call = getattr(requests, method.lower())
 
-        request = requests_call(url, headers=headers, data=data)
+        request = requests_call(url, headers=headers, data=data, params=options)
 
         if request.status_code in (requests.codes.ok, requests.codes.created,
                 requests.codes.accepted):
@@ -99,6 +99,7 @@ class Query(ApiBase):
         self._resource_name = resource_name
         self._object_id = None
         self._parent = None
+        self._where = {}
 
     def get(self, object_id):
         self._object_id = object_id
@@ -106,6 +107,10 @@ class Query(ApiBase):
 
     def parent(self, resource_name, resource_id):
         self._parent = (resource_name, resource_id)
+        return self
+
+    def eq(self, name, value):
+        self._where[name] = value
         return self
 
     def fetch(self):
@@ -116,7 +121,9 @@ class Query(ApiBase):
             return '/{0}/{1}/'.format(self._resource_name, self._object_id)
         else:
             if self._parent:
-                return '/{1}/{2}/{0}/'.format(self._resource_name, *self._parent)
+                parent_name, parent_id = self._parent
+                return '/{0}/{1}/{2}/'.format(parent_name, parent_id,
+                        self._resource_name)
             else:
                 return '/{0}/'.format(self._resource_name)
 
@@ -134,7 +141,12 @@ class Query(ApiBase):
         if not uri:
             uri = self._get_uri()
 
-        response_dict = self._request(uri, 'GET')
+        options = {}
+        if self._where:
+            where = json.dumps(self._where)
+            options.update({'where': where})
+
+        response_dict = self._request(uri, 'GET', options=options)
         for result in response_dict['results']:
             yield ApiObject(self._resource_name, result)
 
