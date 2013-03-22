@@ -143,8 +143,7 @@ class Query(ApiBase):
 
         options = {}
         if self._where:
-            where = json.dumps(self._where)
-            options.update({'where': where})
+            options.update(self._where)
 
         response_dict = self._request(uri, 'GET', options=options)
         for result in response_dict['results']:

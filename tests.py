@@ -96,12 +96,6 @@ class ApiTestCase(unittest.TestCase):
 
     def test_where_eq(self):
         with mock.patch('gapipy.ApiBase._request') as mock_request:
-            mock_request.return_value = {
-                'results': [{
-                'id': '1',
-                'name': 'Bronson',
-                }]
-            }
             query = gapi.Query('customers').eq('email', 'channel@orange.com')
 
             # Query is lazy, not called until we evaluate it.
@@ -110,7 +104,7 @@ class ApiTestCase(unittest.TestCase):
             mock_request.assert_called_with(
                 '/customers/',
                 'GET',
-                options={'where': '{"email": "channel@orange.com"}'},
+                options={"email": "channel@orange.com"},
             )
 
 if __name__ == '__main__':
