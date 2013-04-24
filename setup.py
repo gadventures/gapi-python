@@ -2,7 +2,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='gapipy',
+    name='gapi-python',
     version='0.0.3',
     author='G Adventures',
     author_email='software@gadventures.com',
