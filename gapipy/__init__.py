@@ -1,7 +1,7 @@
 import requests
 import json
 
-API_ROOT = 'http://rest.gadventures.com'
+API_ROOT = 'https://rest.gadventures.com'
 API_PROXY = ''
 APPLICATION_KEY = ''
 
@@ -81,12 +81,12 @@ class ApiObject(ApiBase):
     def _update(self, partial=False):
         method = 'PATCH' if partial else 'PUT'
 
-        uri = '/{0}/{1}/'.format(self._resource_name, self._object_id)
+        uri = '/{0}/{1}'.format(self._resource_name, self._object_id)
         data = self.as_json(partial=partial)
         response_dict = self._request(uri, method, data)
 
     def _create(self):
-        uri = '/{0}/'.format(self._resource_name)
+        uri = '/{0}'.format(self._resource_name)
         data = self.as_json()
         response_dict = self._request(uri, 'POST', data)
         self._object_id = response_dict['id']
@@ -118,14 +118,14 @@ class Query(ApiBase):
 
     def _get_uri(self):
         if self._object_id:
-            return '/{0}/{1}/'.format(self._resource_name, self._object_id)
+            return '/{0}/{1}'.format(self._resource_name, self._object_id)
         else:
             if self._parent:
                 parent_name, parent_id = self._parent
-                return '/{0}/{1}/{2}/'.format(parent_name, parent_id,
+                return '/{0}/{1}/{2}'.format(parent_name, parent_id,
                         self._resource_name)
             else:
-                return '/{0}/'.format(self._resource_name)
+                return '/{0}'.format(self._resource_name)
 
     def _fetch_one(self):
         uri = self._get_uri()

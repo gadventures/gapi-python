@@ -1,29 +1,29 @@
-gapi-python is a Python client for the G Adventures REST API. It provides Python
+gapi-python is a simple Python client for the G Adventures API. It provides Python
 object mapping for methods to save, update and delete objects, as well as an
 interface for querying stored objects.
 
 Usage
 ===
 
-You'll need to provide your G-API _Application Key_. This is available from your
-G-API Dashboard
+You'll need to provide your G Adventures API _Application Key_. This is
+available from your G Adventures API Dashboard
 
     >>> import gapipy as gapi
     >>> gapi.APPLICATION_KEY = 'your application_key'
 
 Query for a list of resources:
 
-    >>> query = gapi.Query('customers')
+    >>> query = gapi.Query('tours')
     >>> query.fetch()
 
 Get a single resource:
 
-    >>> gapi.Query('customers').get('xxAaBceD')
+    >>> gapi.Query('tours').get(9649)
 
 Query a list of resources via a parent criteria. This takes advantage of a
 helpful feature in the API which makes it easy to query for related resources.
 
-    >>> gapi.Query('bookings').parent('customers', 'xxAaBceD').fetch()
+    >>> gapi.Query('departures').parent('tours', 9649).fetch()
 
 Update a fetched resource, sending the full resource (PUT):
 
@@ -44,8 +44,9 @@ You are able to filter resources based on some simple operators.
 
 For instance, simple equality checks:
 
-    >>> gapi.Query('customers').eq('last_name', 'Bronson')
-    >>> gapi.Query('customers').eq('first_name', 'Action').eq('last_name', 'Bronson')
+    >>> gapi.Query('dossiers').eq('dossier_code', 'PPP')
+
+Chaining is of course, allowed for multiple equality checks..
 
 Advanced Usage
 ====
@@ -58,3 +59,13 @@ Dependencies
 ===
 
 * [requests](http://docs.python-requests.org/en/latest/)
+
+Develop
+===
+
+Run tests:
+
+    pip install nose mock
+    nosetests
+
+Then work your magic!

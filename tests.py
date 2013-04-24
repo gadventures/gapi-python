@@ -30,7 +30,7 @@ class ApiTestCase(unittest.TestCase):
                     'name': 'Emperor',
                 }]
             }
-            query = gapi.Query('bookings').parent('customers', 'aaBBceDz')
+            query = gapi.Query('bookings').parent('customers', '1')
 
             results = query.fetch()
             self.assertEquals([r.as_dict() for r in results],
@@ -42,7 +42,7 @@ class ApiTestCase(unittest.TestCase):
                     'id': '1',
                     'name': 'Carmack',
             }
-            result = gapi.Query('customers').get('00130000011iW14AAE')
+            result = gapi.Query('customers').get('1')
 
             self.assertEquals(json.loads(result.as_json()),
                     {'id': '1', 'name': 'Carmack'})
@@ -71,7 +71,7 @@ class ApiTestCase(unittest.TestCase):
         with mock.patch('gapipy.ApiBase._request') as mock_request:
             obj.save(partial=True)
             mock_request.assert_called_with(
-                '/customers/100/',
+                '/customers/100',
                 'PATCH',
                 '{"first_name": "Portis", "last_name": "head"}',
             )
@@ -82,16 +82,16 @@ class ApiTestCase(unittest.TestCase):
         with mock.patch('gapipy.ApiBase._request') as mock_request, \
              mock.patch('gapipy.Query._fetch_one') as mock_fetch:
             mock_fetch.return_value = gapi.ApiObject('customers', {
-                'id': '00130000011iW14AAE',
+                'id': 'foo',
                 'name': 'Action',
             })
-            obj = gapi.Query('customers').get('00130000011iW14AAE')
+            obj = gapi.Query('customers').get('foo')
 
             obj.save()
             mock_request.assert_called_with(
-                '/customers/00130000011iW14AAE/',
+                '/customers/foo',
                 'PUT',
-                '{"id": "00130000011iW14AAE", "name": "Action"}'
+                '{"id": "foo", "name": "Action"}'
             )
 
     def test_where_eq(self):
@@ -102,7 +102,7 @@ class ApiTestCase(unittest.TestCase):
             results = list(query.fetch())
 
             mock_request.assert_called_with(
-                '/customers/',
+                '/customers',
                 'GET',
                 options={"email": "channel@orange.com"},
             )
