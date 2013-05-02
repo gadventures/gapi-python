@@ -5,6 +5,7 @@ API_ROOT = 'https://rest.gadventures.com'
 API_PROXY = ''
 APPLICATION_KEY = ''
 
+
 class ApiBase(object):
     def _request(self, uri, method, data=None, options=None):
         """
@@ -35,6 +36,7 @@ class ApiBase(object):
             request.reason = request.text
             return request.raise_for_status()
 
+
 class ApiObject(ApiBase):
     def __init__(self, resource_name, data_dict=None):
         self._resource_name = resource_name
@@ -56,14 +58,20 @@ class ApiObject(ApiBase):
     def as_dict(self):
         update_fields = self._data_dict.keys()
         properties = [(k, v) for k, v in self._data_dict.items()
-                        if not k.startswith('_') and k in update_fields]
+                      if not k.startswith('_') and k in update_fields]
         return dict(properties)
 
     def as_json(self):
         return json.dumps(self.as_dict())
 
+    def __getitem__(self, key, default='__NO__DEFAULT__'):
+        if default == '__NO__DEFAULT__':
+            return self._data_dict.get(key)
+        return self._data_dict.get(key, default)
+
     def __repr__(self):
         return '<{}: {}>'.format(self._resource_name, self._object_id)
+
 
 class Query(ApiBase):
     def __init__(self, resource_name):
@@ -126,4 +134,3 @@ class Query(ApiBase):
                 continue
             for result in self._fetch_all(link['href']):
                 yield result
-
