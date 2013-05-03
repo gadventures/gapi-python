@@ -72,7 +72,7 @@ class ApiObject(ApiBase):
             update_fields = self._changed
 
         properties = [(k, v) for k, v in self._data_dict.items()
-                        if not k.startswith('_') and k in update_fields]
+                      if not k.startswith('_') and k in update_fields]
         return dict(properties)
 
     def as_json(self, partial=False):
@@ -83,7 +83,12 @@ class ApiObject(ApiBase):
 
         uri = '/{0}/{1}'.format(self._resource_name, self._object_id)
         data = self.as_json(partial=partial)
-        response_dict = self._request(uri, method, data)
+        self._request(uri, method, data)
+
+    def __getitem__(self, key, default='__NO__DEFAULT__'):
+        if default == '__NO__DEFAULT__':
+            return self._data_dict.get(key)
+        return self._data_dict.get(key, default)
 
     def _create(self):
         uri = '/{0}'.format(self._resource_name)
@@ -155,4 +160,3 @@ class Query(ApiBase):
                 continue
             for result in self._fetch_all(link['href']):
                 yield result
-
