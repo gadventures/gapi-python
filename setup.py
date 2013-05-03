@@ -1,11 +1,14 @@
 #!/usr/bin/env python
-from setuptools import setup, find_packages
+from setuptools import setup
+
+packages = ['gapipy']
 
 setup(
-    name='gapipy',
-    version='0.0.3',
+    name='gapi-python',
+    packages=packages,
+    version='0.0.4',
     author='G Adventures',
     author_email='software@gadventures.com',
     description='Python client for the G Adventures REST API',
-    install_requires = ['requests>=1.0.4'], 
+    install_requires=['requests>=1.0.4'],
 )
