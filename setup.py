@@ -6,7 +6,7 @@ packages = ['gapipy']
 setup(
     name='gapi-python',
     packages=packages,
-    version='0.0.4',
+    version='0.0.5',
     author='G Adventures',
     author_email='software@gadventures.com',
     description='Python client for the G Adventures REST API',
