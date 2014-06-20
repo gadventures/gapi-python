@@ -1,3 +1,6 @@
+# DEPRECATED IN FAVOUR OF `gapipy`
+## https://github.com/gadventures/gapipy
+
 gapi-python is a simple Python client for the G Adventures API. It provides Python
 object mapping for methods to save, update and delete objects, as well as an
 interface for querying stored objects.
